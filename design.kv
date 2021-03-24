@@ -1,0 +1,581 @@
+Screen:
+    toolbar: toolbar
+    scr_mgr: scr_mgr
+
+    MDToolbar:
+        id: toolbar
+        size_hint: (1, 0.1)
+        pos_hint: {"top": 1}
+        elevation: 0
+        title: "GENERATOR"
+        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+        right_action_items: [["arrow-left-thick", lambda x: app.back()]]
+
+    MDNavigationLayout:
+        ScreenManager:
+            id: scr_mgr
+            Generator
+            Register_user
+            Login_user
+            Manage
+            Saveuserdata
+            Viewall
+            Predit
+            Edit
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            orientation: "vertical"
+            MDLabel:
+                text: "[color=#009688]Password Manager[/color]"
+                font_style: "H4"
+                halign: "center"
+                size_hint_y: 0.2
+                markup: True
+            MDLabel:
+                text: "[color=#ff0033]By SS141002[/color]"
+                font_style: "H5"
+                halign: "center"
+                size_hint_y: 0.2
+                markup: True
+
+            ScrollView:
+                MDList:
+                    OneLineIconListItem:
+                        text: "[color=#009688][b]GENERATOR[/b][/color]"
+                        markup: True
+                        on_press:
+                            nav_drawer.set_state("close")
+                            scr_mgr.current = "scr_gen"
+                            scr_mgr.transition.direction = 'down'
+                            toolbar.title = "GENERATOR"
+                        IconLeftWidget:
+                            icon: "key-variant"
+
+                    OneLineIconListItem:
+                        text: "[color=#009688][b]MANAGER[/b][/color]"
+                        markup: True
+                        on_press:
+                            toolbar.title = "MANAGER" if app.loggedin() else "LOGIN"
+                            nav_drawer.set_state("close")
+                            scr_mgr.current="scr_manager" if app.loggedin() else "scr_login"
+                            scr_mgr.transition.direction = 'up'
+                        IconLeftWidget:
+                            icon: "account-settings"
+
+                    OneLineIconListItem:
+                        text: "[color=#009688][b]LOGOUT[/b][/color]"
+                        markup: True
+                        on_press:
+                            nav_drawer.set_state("close")
+                            app.logout()
+                        IconLeftWidget:
+                            icon: "logout"
+
+                    OneLineIconListItem:
+                        text: "[color=#009688][b]EXIT[/b][/color]"
+                        markup: True
+                        on_press:
+                            app.self.get_running_app().stop()
+                        IconLeftWidget:
+                            icon: "close-circle"
+
+
+########################################################################################################################
+
+
+<Spinner>:
+    sync_height:True
+    font_size: 20
+    background_color: app.theme_cls.primary_color
+
+<Button>:
+    font_size: 20
+    background_color: app.theme_cls.primary_color
+
+<Smoltxt@MDTextField>:
+    font_size: 20
+    required: True
+    multiline: False
+    helper_text_mode: "on_error"
+    write_tab: False
+    max_text_length: 16
+    size_hint_x: 0.4
+    on_text:
+        self.text = self.text[:16]
+
+<Bigtxt@MDTextField>:
+    font_size: 20
+    multiline: False
+    required: True
+    write_tab: False
+    helper_text_mode: "on_error"
+    max_text_length: 32
+    size_hint_x: 0.54
+    on_text:
+        self.text = self.text[:32]
+
+
+########################################################################################################################
+
+
+<Genlbl@ButtonBehavior+MDLabel>:
+    halign: "left"
+    valign: "center"
+    font_style: "H5"
+    size_hint: (0.26,0.1)
+
+<Genchk@MDCheckbox>:
+	size_hint: (0.1,0.1)
+	active: True
+
+
+<Generator>:
+    name: "scr_gen"
+
+    genlenbox: genlenbox
+    genchkspe: genchkspe
+    genchkcap: genchkcap
+    genchknum: genchknum
+    genchksml: genchksml
+    genpassbox: genpassbox
+
+    FloatLayout:
+        MDLabel:
+            text: "Choose Length of Password"
+            bold: True
+            font_size: 26
+            size_hint:(0.6,0.1)
+            pos_hint: {"center_x":0.375, "center_y":0.8}
+
+        Spinner:
+            id: genlenbox
+            text: "8"
+            values: [f"{x}" for x in range(1,33)]
+            size_hint: (0.2,0.1)
+            pos_hint: {"center_x":0.8,"center_y":0.8}
+
+        Genlbl:
+            text: "Special Characters"
+            pos_hint: {"center_x":0.2, "center_y":0.65}
+            on_press:
+                genchkspe._do_press()
+
+        Genchk:
+            id: genchkspe
+            pos_hint: {"center_x":0.4, "center_y":0.65}
+
+        Genlbl:
+            text: "Capital Letters"
+            pos_hint: {"center_x":0.7, "center_y":0.65}
+            on_press:
+                genchkcap._do_press()
+
+        Genchk:
+            id: genchkcap
+            pos_hint:{"center_x":0.9,"center_y":0.65}
+
+        Genlbl:
+            text: "Numbers"
+            pos_hint: {"center_x":0.2, "center_y":0.55}
+            on_press:
+                genchknum._do_press()
+
+        Genchk:
+            id: genchknum
+            pos_hint:{"center_x":0.4, "center_y":0.55}
+
+        Genlbl:
+            text: "Small Letters"
+            pos_hint:{"center_x":0.7, "center_y":0.55}
+            on_press:
+                genchksml._do_press()
+
+        Genchk:
+            id: genchksml
+            pos_hint: {"center_x":0.9, "center_y":0.55}
+
+        MDTextField:
+            id: genpassbox
+            mode: "rectangle"
+            multiline: True
+            readonly: True
+            font_size: 20
+            size_hint: (0.6,0.14)
+            pos_hint: {"center_x":0.5, "center_y":0.35}
+
+        MDFillRoundFlatIconButton:
+            text: "Generate Password"
+            icon: "key"
+            font_size: 20
+            pos_hint: {"center_x":0.5, "center_y":0.15}
+            on_release:
+                root.condition()
+
+        MDFillRoundFlatIconButton:
+            text: "Save"
+            icon: "content-save"
+            font_size: 20
+            pos_hint: {"center_x":0.25, "center_y":0.15}
+            on_release:
+                root.save_pwd()
+                root.manager.current="scr_svinfo" if root.loggedin() else "scr_login"
+                root.manager.transition.direction = 'up'
+
+        MDFillRoundFlatIconButton:
+            text: "Copy"
+            icon: "content-copy"
+            font_size: 20
+            pos_hint: {"center_x":0.75, "center_y":0.15}
+            on_release:
+                root.copy_password()
+
+
+########################################################################################################################
+
+
+<Register_user>:
+    name: "scr_reg"
+
+    regfname: regfname
+    reglname: reglname
+    reguser: regusername
+    regpass1: regpass1
+    regpass2: regpass2
+    FloatLayout:
+        Smoltxt:
+            id: regfname
+            hint_text: "First Name"
+            pos_hint: {"center_x":0.5, "center_y":0.8}
+
+
+        Smoltxt:
+            id: reglname
+            hint_text: "Last Name"
+            pos_hint: {"center_x":0.5, "center_y":0.65}
+
+        Smoltxt:
+            id: regusername
+            hint_text: "Username"
+            pos_hint: {"center_x":0.5, "center_y":0.5}
+
+        Smoltxt:
+            id: regpass1
+            hint_text: "Password"
+            password: True
+            pos_hint: {"center_x":0.5, "center_y":0.35}
+
+        Smoltxt:
+            id: regpass2
+            hint_text: "Confirm Password"
+            password: True
+            password_mask: "•"
+            pos_hint: {"center_x":0.5, "center_y":0.2}
+
+        MDFillRoundFlatIconButton:
+            text: "REGISTER"
+            icon: "account"
+            password_mask: "•"
+            font_size: 20
+            pos_hint: {"center_x":0.5, "center_y":0.1}
+            on_release:
+                root.registering_user()
+
+
+########################################################################################################################
+
+
+<Login_user>:
+    name: "scr_login"
+    loginuser: loginuser
+    loginpass: loginpass
+    logincheck:logincheck
+
+    FloatLayout:
+        Smoltxt:
+            id: loginuser
+            mode: "rectangle"
+            hint_text: "Username"
+            pos_hint: {"center_x":0.5, "center_y":0.75}
+
+        Smoltxt:
+            id: loginpass
+            hint_text: "Password"
+            password: True
+            mode: "rectangle"
+            password_mask: "•"
+            pos_hint: {"center_x":0.5, "center_y":0.6}
+
+        MDIconButton:
+            icon: "eye" if loginpass.password else "eye-off"
+            text_color: app.theme_cls.primary_color
+            pos_hint: {"center_x":0.75, "center_y":0.595}
+            on_release:
+                loginpass.password = not loginpass.password
+
+        MDCheckbox:
+            size_hint: (0.1,0.1)
+            id:logincheck
+            pos_hint: {'center_x': 0.35, 'center_y': .45}
+
+        MDLabel:
+            text:"Remain Logged in"
+            font_size:20
+            size_hint_x:0.2
+            pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+
+        MDTextButton:
+            text: "Does not have Account! Register"
+            pos_hint: {"center_x":0.5, "center_y":0.35}
+            font_size: 20
+            on_release:
+                root.manager.current="scr_reg"
+                app.screen.ids.toolbar.title = "REGISTER"
+                root.manager.transition.direction = 'right'
+
+        MDFillRoundFlatIconButton:
+            text: "Login"
+            icon: "login"
+            font_size: 20
+            pos_hint: {"center_x":0.5, "center_y":0.25}
+            on_release:
+                root.logging_in_user()
+
+
+########################################################################################################################
+
+
+<Manage>:
+    name: "scr_manager"
+
+    FloatLayout:
+        MDFillRoundFlatIconButton:
+            text: "Save"
+            icon: "content-save"
+            font_size: 25
+            pos_hint: {"center_x":0.5, "center_y":0.7}
+            on_release:
+                root.going_to_save()
+                root.manager.current = "scr_svinfo"
+                root.manager.transition.direction = "left"
+
+        MDFillRoundFlatIconButton:
+            text: "Edit"
+            icon: "account-edit"
+            font_size: 25
+            pos_hint: {"center_x":0.5, "center_y":0.55}
+            on_release:
+                root.manager.current = "scr_predit"
+                root.manager.transition.direction = "left"
+
+        MDFillRoundFlatIconButton:
+            text: "View All"
+            icon: "view-list"
+            font_size: 25
+            pos_hint: {"center_x":0.5, "center_y":0.4}
+            on_release:
+                root.manager.current = "scr_viewall"
+                root.manager.transition.direction = "left"
+
+        MDFillRoundFlatIconButton:
+            text: "Delete User"
+            icon: "delete"
+            font_size: 25
+            pos_hint: {"center_x":0.5, "center_y":0.25}
+            on_release:
+                root.del_user()
+
+
+########################################################################################################################
+
+
+<Saveuserdata>:
+    name: "scr_svinfo"
+    svfield:svfield
+    svdata:svdata
+    svpass:svpass
+    svdesc:svdesc
+
+    FloatLayout:
+        Spinner:
+            id:svfield
+            text: "Username"
+            values: ["Username","Email","Site","App"]
+            size_hint: (0.2, 0.08)
+            pos_hint: {"center_x":0.15, "center_y":0.76}
+
+        Bigtxt:
+            id:svdata
+            hint_text: svfield.text
+            pos_hint: {"center_x":0.57, "center_y":0.75}
+
+        Bigtxt:
+            id:svpass
+            password_mask: "•"
+            hint_text: "Password"
+            pos_hint: {"center_x":0.57, "center_y":0.6}
+            password: True
+
+        MDIconButton:
+            icon: "eye" if svpass.password else "eye-off"
+            pos_hint: {"center_x":0.9, "center_y":0.59}
+            text_color: app.theme_cls.primary_color
+            on_release:
+                svpass.password = not svpass.password
+
+        Bigtxt:
+            id:svdesc
+            hint_text: "Description"
+            pos_hint: {"center_x":0.57, "center_y":0.44}
+            required:False
+
+
+        MDFillRoundFlatIconButton:
+            text: "Save"
+            icon: "content-save"
+            font_size: 20
+            pos_hint: {"center_x":0.5, "center_y":0.25}
+            on_release:
+                root.saving_password()
+
+
+########################################################################################################################
+
+
+<Viewall>:
+    name: "scr_viewall"
+    layout:layout
+    srchbox:srchbox
+    srchdata:srchdata
+
+    FloatLayout:
+        id:layout
+		size_hint:(1,0.9)
+		pos_hint: {"center_x":0.5, "center_y":0.45}
+
+		Spinner:
+            id:srchbox
+            text_autoupdate:True
+            values: ["All", "Username","Email","Site","App"]
+            size_hint:(0.2,0.08)
+            pos_hint: {"center_x":0.2, "center_y":0.925}
+
+        MDTextField:
+            id:srchdata
+            font_size: 20
+            multiline: False
+            write_tab: False
+            # mode: "rectangle"
+            hint_text: srchbox.text
+			max_text_length: 32
+			write_tab: False
+			disabled: True if srchbox.text == "All" else False
+			size_hint: (0.4, 0.1)
+			pos_hint: {"center_x":0.55, "center_y":0.925}
+            on_text:
+                self.text = self.text[:32]
+
+		MDFillRoundFlatIconButton:
+            text: "Search"
+            icon: "magnify"
+            font_size: 20
+            pos_hint: {"center_x":0.85, "center_y":0.925}
+            on_release:
+                root.search()
+
+
+########################################################################################################################
+
+
+<Predit>:
+    name:"scr_predit"
+    predpid:predpid
+    FloatLayout:
+        MDTextField:
+            id:predpid
+            font_size: 20
+            required: True
+            multiline: False
+            helper_text_mode: "on_error"
+            write_tab: False
+            mode: "rectangle"
+            hint_text: "PID"
+			hint_text_color:app.theme_cls.primary_color
+            input_filter:"int"
+            helper_text: "Enter PID"
+			max_text_length: 6
+			size_hint_x:0.14
+			pos_hint: {"center_x":0.5, "center_y":0.55}
+            on_text:
+                self.text = self.text[:6]
+
+        MDFillRoundFlatIconButton:
+            text: "NEXT"
+            icon: "arrow-right-thick"
+            font_size: 20
+            pos_hint: {"center_x":0.5, "center_y":0.4}
+            on_release:
+                root.predpass()
+
+
+########################################################################################################################
+
+
+<Edit>:
+    name:"scr_edit"
+    edfield:edfield
+    eddata:eddata
+    edpass:edpass
+    eddesc:eddesc
+
+    FloatLayout:
+        Spinner:
+            id:edfield
+            text: "Username"
+            values: ["Username","Email","Site","App"]
+            size_hint: (0.2, 0.08)
+            pos_hint: {"center_x":0.15, "center_y":0.76}
+
+        Bigtxt:
+            id:eddata
+            hint_text: edfield.text
+            pos_hint: {"center_x":0.57, "center_y":0.75}
+
+        Bigtxt:
+            id:edpass
+            password_mask: "•"
+            hint_text: "Password"
+            pos_hint: {"center_x":0.57, "center_y":0.6}
+            password: True
+
+        MDIconButton:
+            icon: "eye" if edpass.password else "eye-off"
+            pos_hint: {"center_x":0.9, "center_y":0.59}
+            text_color: app.theme_cls.primary_color
+            on_release:
+                edpass.password = not edpass.password
+
+        Bigtxt:
+            id:eddesc
+            hint_text: "Description"
+            pos_hint: {"center_x":0.57, "center_y":0.44}
+            required:False
+
+        MDFillRoundFlatIconButton:
+            text: "Delete"
+            icon: "delete"
+            font_size: 20
+            pos_hint: {"center_x":0.4, "center_y":0.25}
+            on_release:
+                root.deletepass()
+
+        MDFillRoundFlatIconButton:
+            text: "Save"
+            icon: "content-save"
+            font_size: 20
+            pos_hint: {"center_x":0.6, "center_y":0.25}
+            on_release:
+                root.editingpass()
+
+
+########################################################################################################################
